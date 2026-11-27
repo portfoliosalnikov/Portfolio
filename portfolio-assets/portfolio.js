@@ -7,7 +7,7 @@ if(!reduced.matches&&'IntersectionObserver'in window){document.documentElement.c
 ;(()=>{
  const videos=[...document.querySelectorAll('.ps-video')];if(!videos.length)return;
  const states=new Map();let soundEnabled=false,queued=false,active=null;
- const sound=document.createElement('button');sound.type='button';sound.className='pf-enable-sound';sound.textContent='Включить звук · 50%';sound.hidden=true;document.body.append(sound);
+ const sound=document.createElement('button');sound.type='button';sound.className='pf-enable-sound pf-media-sound-hint';sound.textContent='Включить звук · 50%';sound.setAttribute('aria-label','Включить звук на 50 процентов');sound.hidden=true;document.body.append(sound);
  videos.forEach(v=>{
   states.set(v,{pending:false,manual:false,lastInput:-10000,lastAttempt:-10000});
   v.muted=true;v.defaultMuted=true;v.volume=.5;v.playsInline=true;v.autoplay=true;v.loop=true;v.preload='auto';
@@ -54,6 +54,13 @@ if(!reduced.matches&&'IntersectionObserver'in window){document.documentElement.c
    if(v!==active){if(!v.paused)v.pause();states.get(v).manual=false;v.dataset.playbackState='outside';}
   });
   sound.hidden=!active||soundEnabled;
+  if(active&&!soundEnabled){
+   const figure=active.closest('figure');
+   if(figure&&sound.parentElement!==figure)figure.append(sound);
+   sound.style.maxWidth=`${Math.max(120,active.offsetWidth-24)}px`;
+   sound.style.left=`${active.offsetLeft+active.offsetWidth-sound.offsetWidth-12}px`;
+   sound.style.top=`${active.offsetTop+16}px`;
+  }
   if(active){if(active!==previous)states.get(active).manual=false;start(active);}
  }
  function request(){if(!queued){queued=true;requestAnimationFrame(update);}}
