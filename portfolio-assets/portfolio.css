@@ -30,3 +30,6 @@ header.pf-hero{margin:0 auto;max-width:1400px;display:grid;grid-template-columns
 html,body{overflow-x:clip} @media(min-width:761px) and (prefers-reduced-motion:no-preference){.pf-scroll-scene .ps-photos.single .ps-photo{width:fit-content;max-width:100%;margin:auto}.pf-scroll-scene .ps-photos.single .ps-photo img{width:auto;max-width:100%}}
 
 .pf-enable-sound{position:fixed;right:24px;bottom:24px;z-index:1100;padding:14px 20px;border:1px solid var(--amber);border-radius:100px;background:#151618;color:var(--text);font:500 13px var(--body);cursor:pointer;box-shadow:0 6px 30px #0008}.pf-enable-sound[hidden]{display:none}
+
+@media(min-width:1100px){.wrap{max-width:1760px;padding-left:48px;padding-right:48px}.pf-scroll-scene .ps-media{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:32px}}
+@media(min-width:761px) and (prefers-reduced-motion:no-preference){.pf-scroll-scene .ps-photos .ps-photo{width:fit-content;max-width:100%;margin:0 auto}.pf-scroll-scene .ps-photos .ps-photo img{width:auto;max-width:100%;height:calc(100vh - 215px);max-height:740px;object-fit:contain}}
