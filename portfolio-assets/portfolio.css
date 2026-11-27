@@ -46,3 +46,5 @@ html,body{overflow-x:clip} @media(min-width:761px) and (prefers-reduced-motion:n
 .pf-card-deck .pf-art-label{left:0;right:0;text-align:center;bottom:-5px}
 @media(max-width:760px){.pf-hero-art.pf-card-deck{height:440px;margin-top:20px}.pf-deck-card{width:210px;top:46%}.pf-deck-card[data-slot="1"]{--deck-x:57px}.pf-deck-card[data-slot="2"]{--deck-x:-51px}.pf-deck-card.is-dealing{--deck-x:-105px}.pf-card-deck .pf-art-label{bottom:0;font-size:8px}}
 @media(prefers-reduced-motion:reduce){.pf-deck-card{transition:none}}
+
+footer#contact-footer{display:flex;justify-content:center;align-items:center;min-height:0;margin:32px 0 0!important;padding:28px 20px!important;background:none;border-top:1px solid var(--line-soft)}
