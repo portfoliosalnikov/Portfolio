@@ -47,26 +47,29 @@ if(!reduced.matches&&'IntersectionObserver'in window){document.documentElement.c
  document.addEventListener('visibilitychange',()=>videos.forEach(v=>{if(document.hidden)v.pause();else if(visible.has(v))start(v);}));
 })();
 ;(()=>{
- const deck=document.querySelector('.pf-hero-art');if(!deck)return;
+ const deck=document.querySelector('.pf-card-deck');if(!deck)return;
  const reduced=matchMedia('(prefers-reduced-motion:reduce)');
- const pictures=[...deck.querySelectorAll('.pf-art')];
- const cards=pictures.map((img,i)=>{
-  const button=document.createElement('button');button.type='button';button.className='pf-deck-card';
-  button.setAttribute('aria-label',`Показать карточку: ${img.alt}`);
-  const copy=img.cloneNode();copy.className='';button.append(copy);deck.append(button);
-  button.addEventListener('click',()=>{if(changing)return;front=i===front?(front+1)%cards.length:i;arrange();restart();});
-  return button;
- });
- let front=0,changing=false,timer=null,phase=null,inView=true;
- deck.classList.add('pf-card-deck');
+ const cards=[...deck.querySelectorAll('.pf-deck-card')];if(!cards.length)return;
+ let front=0,changing=false,ready=false,timer=null,inView=true;
+ cards.forEach((button,i)=>button.addEventListener('click',()=>{if(changing||!ready)return;front=i===front?(front+1)%cards.length:i;arrange();restart();}));
  function arrange(){cards.forEach((card,i)=>{const slot=(i-front+cards.length)%cards.length;card.dataset.slot=slot;card.setAttribute('aria-pressed',String(slot===0));});}
  function stop(){clearTimeout(timer);timer=null;}
- function paused(){return reduced.matches||document.hidden||!inView||deck.matches(':hover')||deck.contains(document.activeElement);}
- function restart(){stop();if(!paused())timer=setTimeout(next,3000);}
- function next(){if(paused())return;changing=true;const outgoing=cards[front];outgoing.classList.add('is-dealing');phase=setTimeout(()=>{front=(front+1)%cards.length;arrange();outgoing.classList.remove('is-dealing');changing=false;restart();},440);}
+ function paused(){return !ready||changing||reduced.matches||document.hidden||!inView||deck.matches(':hover')||deck.contains(document.activeElement);}
+ function restart(){stop();if(!paused())timer=setTimeout(next,4200);}
+ function next(){if(paused())return;changing=true;const outgoing=cards[front];outgoing.classList.add('is-dealing');setTimeout(()=>{front=(front+1)%cards.length;arrange();outgoing.classList.remove('is-dealing');setTimeout(()=>{changing=false;restart();},950);},700);}
  deck.addEventListener('pointerenter',stop);deck.addEventListener('pointerleave',restart);
  deck.addEventListener('focusin',stop);deck.addEventListener('focusout',()=>queueMicrotask(restart));
  document.addEventListener('visibilitychange',restart);reduced.addEventListener('change',restart);
  if('IntersectionObserver'in window)new IntersectionObserver(([e])=>{inView=e.isIntersecting;restart();},{threshold:.1}).observe(deck);
- arrange();restart();
+ // The deck already has its final structure and fixed image dimensions in HTML.
+ arrange();
+ const loaded=[...deck.querySelectorAll('.pf-deck-card img')].map(img=>{
+  if(img.decode)return img.decode();
+  if(img.complete)return Promise.resolve();
+  return new Promise(resolve=>{img.addEventListener('load',resolve,{once:true});img.addEventListener('error',resolve,{once:true});});
+ });
+ Promise.allSettled(loaded).then(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  deck.dataset.deckState='entering';
+  setTimeout(()=>{deck.dataset.deckState='ready';ready=true;restart();},reduced.matches?0:1450);
+ })));
 })();
