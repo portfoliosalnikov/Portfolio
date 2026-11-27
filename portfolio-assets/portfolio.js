@@ -10,9 +10,9 @@ if(!reduced.matches&&'IntersectionObserver'in window){document.documentElement.c
  const visible=new Set();
  let soundUnlocked=false;
  const soundButton=document.createElement('button');
- soundButton.type='button';soundButton.className='pf-enable-sound';soundButton.textContent='Запустить со звуком · 50%';soundButton.hidden=true;
+ soundButton.type='button';soundButton.className='pf-enable-sound';soundButton.textContent='Включить звук · 50%';soundButton.hidden=true;
  document.body.append(soundButton);
- videos.forEach(v=>{v.muted=false;v.defaultMuted=false;v.volume=.5;v.playsInline=true;});
+ videos.forEach(v=>{v.muted=true;v.defaultMuted=true;v.volume=.5;v.playsInline=true;});
  function unlockSound(){
   soundUnlocked=true;soundButton.hidden=true;
   videos.forEach(v=>{v.muted=false;v.volume=.5;if(visible.has(v))start(v);});
@@ -22,13 +22,21 @@ if(!reduced.matches&&'IntersectionObserver'in window){document.documentElement.c
  function start(v){
   if(document.hidden||!visible.has(v))return;
   if(v.ended)v.currentTime=0;
+  if(!soundUnlocked){v.muted=true;v.defaultMuted=true;}
   const attempt=v.play();
-  if(attempt)attempt.then(()=>{soundButton.hidden=true;if(document.hidden||!visible.has(v))v.pause();}).catch(()=>{
+  if(attempt)attempt.then(()=>{soundButton.hidden=v.muted?false:true;if(document.hidden||!visible.has(v))v.pause();}).catch(error=>{
    if(!visible.has(v)||document.hidden)return;
-   v.muted=false;v.volume=.5;soundButton.hidden=false;
+   if(error.name!=='NotAllowedError')return;
+   v.muted=true;v.volume=.5;soundButton.hidden=false;
+   const silent=v.play();
+   if(silent)silent.then(()=>{if(document.hidden||!visible.has(v))v.pause();}).catch(()=>{});
   });
  }
  if('IntersectionObserver' in window){
+  const preloadObserver=new IntersectionObserver(entries=>entries.forEach(({target:v,isIntersecting})=>{
+   if(isIntersecting){v.preload='auto';preloadObserver.unobserve(v);}
+  }),{rootMargin:'650px 0px',threshold:0});
+  videos.forEach(v=>preloadObserver.observe(v));
   const observer=new IntersectionObserver(entries=>entries.forEach(({target:v,isIntersecting,intersectionRatio})=>{
    const entering=isIntersecting&&intersectionRatio>=.35;
    if(entering&&!visible.has(v)){visible.add(v);start(v);}
