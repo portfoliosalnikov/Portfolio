@@ -79,8 +79,25 @@ if(!reduced.matches&&'IntersectionObserver'in window){document.documentElement.c
  const reduced=matchMedia('(prefers-reduced-motion:reduce)');
  const cards=[...deck.querySelectorAll('.pf-deck-card')];if(!cards.length)return;
  let front=0,changing=false,ready=false,timer=null,inView=true;
+ function fitHover(card){
+  const width=deck.clientWidth,height=deck.clientHeight,cw=card.offsetWidth,ch=card.offsetHeight;
+  if(!cw||!ch||!width||!height)return;
+  const padding=14,bottom=28;
+  const scale=Math.min(1.12,(width-padding*2)/cw,(height-padding-bottom)/ch);
+  const style=getComputedStyle(card),slotX=parseFloat(style.getPropertyValue('--deck-x'))||0,slotY=parseFloat(style.getPropertyValue('--deck-y'))||0;
+  const halfW=cw*scale/2,halfH=ch*scale/2;
+  const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+  const x=clamp(width*.5+slotX,padding+halfW,width-padding-halfW)-width*.5;
+  const anchorY=parseFloat(style.top)||height*.47;
+  const y=clamp(anchorY+slotY,padding+halfH,height-bottom-halfH)-anchorY;
+  card.style.setProperty('--deck-hover-x',`${x}px`);
+  card.style.setProperty('--deck-hover-y',`${y}px`);
+  card.style.setProperty('--deck-hover-scale',scale);
+ }
+ cards.forEach(card=>{card.addEventListener('pointerenter',()=>fitHover(card));card.addEventListener('focus',()=>fitHover(card));});
+ addEventListener('resize',()=>cards.forEach(fitHover),{passive:true});
  cards.forEach((button,i)=>button.addEventListener('click',()=>{if(changing||!ready)return;front=i===front?(front+1)%cards.length:i;arrange();restart();}));
- function arrange(){cards.forEach((card,i)=>{const slot=(i-front+cards.length)%cards.length;card.dataset.slot=slot;card.setAttribute('aria-pressed',String(slot===0));});}
+ function arrange(){cards.forEach((card,i)=>{const slot=(i-front+cards.length)%cards.length;card.dataset.slot=slot;card.setAttribute('aria-pressed',String(slot===0));fitHover(card);});}
  function stop(){clearTimeout(timer);timer=null;}
  function paused(){return !ready||changing||reduced.matches||document.hidden||!inView||deck.matches(':hover')||deck.contains(document.activeElement);}
  function restart(){stop();if(!paused())timer=setTimeout(next,4200);}
@@ -98,6 +115,7 @@ if(!reduced.matches&&'IntersectionObserver'in window){document.documentElement.c
  });
  Promise.allSettled(loaded).then(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
   deck.dataset.deckState='entering';
+  cards.forEach(fitHover);
   setTimeout(()=>{deck.dataset.deckState='ready';ready=true;restart();},reduced.matches?0:1450);
  })));
 })();

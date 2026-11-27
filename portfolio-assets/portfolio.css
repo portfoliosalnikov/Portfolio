@@ -41,8 +41,8 @@ html,body{overflow-x:clip} @media(min-width:761px) and (prefers-reduced-motion:n
 .pf-deck-card[data-slot="1"]{--deck-x:95px;--deck-y:-7px;--deck-r:10deg;--deck-scale:.9;--deck-z:2}
 .pf-deck-card[data-slot="2"]{--deck-x:-72px;--deck-y:-37px;--deck-r:-11deg;--deck-scale:.81;--deck-z:1}
 .pf-deck-card.is-dealing{--deck-x:-190px;--deck-y:12px;--deck-r:-24deg;--deck-scale:.92;--deck-opacity:.25;z-index:4}
-@media(hover:hover){.pf-card-deck[data-deck-state="ready"] .pf-deck-card:hover{z-index:10;transform:translate(-50%,-50%) translate(var(--deck-x),var(--deck-y)) rotate(0deg) scale(1.12);border-color:var(--amber);box-shadow:0 40px 100px #000c}}
-.pf-deck-card:focus-visible{outline:2px solid var(--amber);outline-offset:7px;z-index:10;transform:translate(-50%,-50%) scale(1.1)}
+@media(hover:hover){.pf-card-deck[data-deck-state="ready"] .pf-deck-card:hover{z-index:10;transform:translate(-50%,-50%) translate(var(--deck-hover-x,0px),var(--deck-hover-y,24px)) rotate(0deg) scale(var(--deck-hover-scale,1));border-color:var(--amber);box-shadow:0 40px 100px #000c}}
+.pf-deck-card:focus-visible{outline:2px solid var(--amber);outline-offset:7px;z-index:10;transform:translate(-50%,-50%) translate(var(--deck-hover-x,0px),var(--deck-hover-y,24px)) rotate(0deg) scale(var(--deck-hover-scale,1))}
 .pf-card-deck .pf-art-label{left:0;right:0;text-align:center;bottom:-5px}
 @media(max-width:760px){.pf-hero-art.pf-card-deck{height:440px;margin-top:20px}.pf-deck-card{width:210px;top:46%}.pf-deck-card[data-slot="1"]{--deck-x:57px}.pf-deck-card[data-slot="2"]{--deck-x:-51px}.pf-deck-card.is-dealing{--deck-x:-105px}.pf-card-deck .pf-art-label{bottom:0;font-size:8px}}
 @media(prefers-reduced-motion:reduce){.pf-deck-card{transition:none}}
