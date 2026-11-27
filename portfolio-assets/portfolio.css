@@ -61,3 +61,12 @@ footer#contact-footer{display:flex;justify-content:center;align-items:center;min
 .pf-media-sound-hint:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
 @keyframes pf-sound-hint-in{from{opacity:0;translate:0 -5px}to{opacity:1;translate:0 0}}
 @media(prefers-reduced-motion:reduce){.pf-media-sound-hint{animation:none}}
+
+@media(min-width:761px){
+ header.pf-hero{padding-top:55px;padding-bottom:65px;min-height:820px}
+ .pf-hero-art.pf-card-deck{height:700px}
+ .pf-card-deck .pf-deck-card{width:clamp(265px,28vw,360px);top:47%}
+ .ps-case[data-project="baggy"] .pf-scroll-scene .ps-video{height:calc(100vh - 150px);max-height:960px}
+ .ps-case[data-project="baggy"] .ps-media{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+}
+@media(max-width:760px){.pf-hero-art.pf-card-deck{height:520px}.pf-card-deck .pf-deck-card{width:min(66vw,260px)}}
